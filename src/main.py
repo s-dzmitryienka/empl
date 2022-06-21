@@ -1,11 +1,16 @@
 import uvicorn
+from celery import Celery
 from fastapi import FastAPI
 
+from core.config import CELERY_BROKER_URL
 from db.base import database
 from endpoints.users import router
 
 app = FastAPI(title='EE')
 app.include_router(router=router, prefix='/users', tags=['users'])
+
+celery_app = Celery('background', broker=CELERY_BROKER_URL)
+celery_app.autodiscover_tasks()
 
 
 @app.on_event("startup")

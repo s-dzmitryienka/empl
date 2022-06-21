@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from endpoints.depends import get_user_repository
 from models.users import User, UserIn
 from repositories.users import UserRepository
-
+from background_tasks import bg_task
 router = APIRouter()
 
 
@@ -19,7 +19,7 @@ async def read_users(
 
 
 @router.post(path='/', response_model=User)
-async def read_users(
+async def create_user(
         user: UserIn,
         users: UserRepository = Depends(get_user_repository),
 ):
@@ -31,4 +31,5 @@ async def get_user_by_id(
         user_id: int,
         users: UserRepository = Depends(get_user_repository),
 ):
+    bg_task.delay(user_id)
     return await users.get_by_id(user_id)

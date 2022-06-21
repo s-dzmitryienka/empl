@@ -1,0 +1,8 @@
+!!! IMPORTANT !!!
+Before run celery workers export all environment variables of project
+Also don't import local packages or modules inside celery task, because you will get No module find error!
+
+RUN flow:
+export ENV_VAR1="value1"
+export EE_DATA_BASE_URL="postgresql://root:root@localhost:32700/employment_exchange"
+celery -A celery_worker.celery_app worker --loglevel=info
