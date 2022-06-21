@@ -13,6 +13,7 @@ passlib = "*"
 pydantic = "*"
 email-validator = "*"
 bcrypt = "*"
+celery = "*"
 
 [dev-packages]
 
