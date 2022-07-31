@@ -5,7 +5,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ~/docker_volumes/fast_api_tutor_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
@@ -19,7 +19,7 @@ services:
     container_name: fastpi-app
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     command: uvicorn main:app --host '0.0.0.0' --port 8000 --reload
     restart: always
     ports:
