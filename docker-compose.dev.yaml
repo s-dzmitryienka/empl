@@ -1,11 +1,11 @@
-version: '3'
+version: '3.8'
 services:
   db:
     image: postgres:11
     ports:
       - 5432:5432
     volumes:
-      - ~/docker_volumes/fast_api_tutor_data:/var/lib/postgresql/data
+      - fastapi_tutor_pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
@@ -15,18 +15,19 @@ services:
     image: rabbitmq:3-management
     restart: always
 
+    volumes:
+      - fastapi_tutor_rabbitdata:/var/lib/rabbitmq
   app:
     container_name: fastpi-app
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     command: uvicorn main:app --host '0.0.0.0' --port 8000 --reload
     restart: always
     ports:
       - "8000:8000"
     environment:
       PYTHONPATH: /app/src
-      # EE_DATA_BASE_URL: postgresql://root:root@localhost:32700/employment_exchange
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: root
@@ -42,3 +43,7 @@ services:
     depends_on:
       - db
       - rabbit
+
+volumes:
+  fastapi_tutor_pgdata: {}
+  fastapi_tutor_rabbitdata: {}
