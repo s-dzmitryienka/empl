@@ -3,10 +3,42 @@ services:
   db:
     image: postgres:11
     ports:
-      - 32700:5432
+      - 5432:5432
     volumes:
       - ./data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: employment_exchange
+
+  rabbit:
+    image: rabbitmq:3-management
+    restart: always
+
+  app:
+    container_name: fastpi-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: uvicorn main:app --host '0.0.0.0' --port 8000 --reload
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      PYTHONPATH: /app/src
+      # EE_DATA_BASE_URL: postgresql://root:root@localhost:32700/employment_exchange
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: employment_exchange
+
+      # rabbitmq
+      RABBIT_HOST: rabbit
+      RABBIT_PORT: 5672
+      RABBIT_USER: guest
+      RABBIT_PASSWORD: guest
+      MESSAGE_BROKER: amqp
+    depends_on:
+      - db
+      - rabbit
