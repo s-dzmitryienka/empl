@@ -14,9 +14,21 @@ services:
   rabbit:
     image: rabbitmq:3-management
     restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
 
     volumes:
       - fastapi_tutor_rabbitdata:/var/lib/rabbitmq
+
+  redis:
+    image: redis:7.0.4
+    ports:
+      - 6379:6379
+    restart: always
+
+    volumes:
+      - fastapi_tutor_redisdata:/usr/local/etc/redis
   app:
     container_name: fastpi-app
     build:
@@ -28,6 +40,8 @@ services:
       - "8000:8000"
     environment:
       PYTHONPATH: /app/src
+
+      # db
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: root
@@ -40,10 +54,19 @@ services:
       RABBIT_USER: guest
       RABBIT_PASSWORD: guest
       MESSAGE_BROKER: amqp
+
+      # redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      REDIS_URL: redis://localhost:6379/0
+
     depends_on:
       - db
       - rabbit
+      - redis
 
 volumes:
   fastapi_tutor_pgdata: {}
   fastapi_tutor_rabbitdata: {}
+  fastapi_tutor_redisdata: {}

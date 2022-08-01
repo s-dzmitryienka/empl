@@ -14,6 +14,11 @@ DB_PORT = os.getenv('DB_PORT')
 
 DATABASE_URL = f"{DB}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = os.getenv('REDIS_PORT', 6379)
+REDIS_DB = os.getenv('REDIS_DB', '0')
+REDIS_URL=f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+
 # msg broker conf
 RABBIT_HOST = os.getenv('RABBIT_HOST', 'localhost')
 RABBIT_PORT = os.getenv('RABBIT_PORT', '5672')
