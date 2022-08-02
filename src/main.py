@@ -1,15 +1,13 @@
 import uvicorn
-import aioredis
 from celery import Celery
 from fastapi import FastAPI
-
-from core.config import CELERY_BROKER_URL, REDIS_URL
+from core import config
+from core.config import CELERY_BROKER_URL
 from db.base import database
 from endpoints.users import router
-
-from fastapi_admin.app import app as admin_app
-from fastapi_admin.providers.login import UsernamePasswordProvider
-from admin.models import Admin
+from sqladmin import Admin, ModelView
+from db.base import engine
+from db.users import User
 
 
 app = FastAPI(title='EE')
@@ -18,27 +16,27 @@ app.include_router(router=router, prefix='/users', tags=['users'])
 celery_app = Celery('background', broker=CELERY_BROKER_URL)
 celery_app.autodiscover_tasks()
 
+admin = Admin(app, engine)
+
+
+class UserAdmin(ModelView, model=User):
+    column_list = [User.id, User.name, User.email]
+    name = "User"
+    name_plural = "Users"
+    icon = "fa-solid fa-user"
+    column_searchable_list = [User.name]
+
+admin.add_view(UserAdmin)
 
 @app.on_event("startup")
 async def startup():
     await database.connect()
 
-    redis = await aioredis.create_redis_pool(address=REDIS_URL)
-    await admin_app.configure(
-        logo_url="https://preview.tabler.io/static/logo-white.svg",
-        template_folders=["templates"],
-        providers=[
-            UsernamePasswordProvider(
-                login_logo_url="https://preview.tabler.io/static/logo.svg", admin_model=Admin
-            )
-        ],
-        redis=redis,
-    )
-
 
 @app.on_event("shutdown")
 async def shutdown():
     await database.disconnect()
+
 
 
 if __name__ == '__main__':
