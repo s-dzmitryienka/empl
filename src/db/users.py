@@ -20,13 +20,7 @@ users = sqlalchemy.Table(
 )
 
 class User:
-    id: str
-    email: str
+    pass
 
-    @property
-    def id_email(self):
-        value = f'{self.id}-{self.email}'
-        print('!!**!!'* 100, value)
-        return value
 
 mapper_registry.map_imperatively(User, users)
