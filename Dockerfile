@@ -9,7 +9,7 @@ RUN pip3 install pipenv
 COPY Pipfile .
 COPY Pipfile.lock .
 
-RUN pipenv lock --dev -r > requirements.txt
+RUN pipenv requirements --dev > requirements.txt
 RUN pip install -r requirements.txt
 COPY . /app
 WORKDIR /app
