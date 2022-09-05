@@ -24,9 +24,7 @@ jobs:
 
       -
         name: Build and push
-        env:
-          IMAGE_TAG: ${{ github.sha }}
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: dzmitrock87/empl:$IMAGE_TAG
+          tags: dzmitrock87/empl:${GITHUB_REF##*/}
