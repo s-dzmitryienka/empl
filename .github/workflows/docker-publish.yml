@@ -27,4 +27,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: dzmitrock87/empl:${GITHUB_REF##*/}
+          tags: dzmitrock87/empl:latest
